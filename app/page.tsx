@@ -1,65 +1,108 @@
-import Image from "next/image";
+"use client";
+
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { Loader2 } from "lucide-react";
+
+// Static blogs as requested
+const STATIC_POSTS = [
+  {
+    id: "static-1",
+    title: "The Art of Modern Minimalist Design",
+    slug: "art-of-minimalist-design",
+    excerpt: "Why less is often more when it comes to creating premium web experiences.",
+    category: "Design",
+    published_at: new Date().toISOString(),
+    author: "Pratap"
+  },
+  {
+    id: "static-2",
+    title: "Mastering Next.js 15 for Performance",
+    slug: "mastering-nextjs-15",
+    excerpt: "A deep dive into the latest features and optimizations in the Next.js ecosystem.",
+    category: "Technology",
+    published_at: new Date().toISOString(),
+    author: "Pratap"
+  },
+  {
+    id: "static-3",
+    title: "The Future of Serverless Databases",
+    slug: "future-of-serverless-db",
+    excerpt: "How Neon and other providers are changing the way we think about data at scale.",
+    category: "Architecture",
+    published_at: new Date().toISOString(),
+    author: "Pratap"
+  }
+];
 
 export default function Home() {
+  const [posts, setPosts] = useState<any[]>(STATIC_POSTS); // Default to static data
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchPosts() {
+      try {
+        const res = await fetch("/api/posts");
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.length > 0) {
+            setPosts([...STATIC_POSTS, ...data]); // Combine static and dynamic
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch posts, showing static content only:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchPosts();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-32">
+        <Loader2 className="animate-spin w-8 h-8 text-gray-300" />
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    <div className="max-w-4xl mx-auto py-16 px-6">
+      <div className="space-y-24">
+        {posts.map((post) => (
+          <article key={post.id} className="group">
+            <header className="mb-6">
+              <div className="flex items-center space-x-2 text-[10px] uppercase tracking-[0.2em] font-bold text-gray-400 mb-3">
+                <span>{new Date(post.published_at).toLocaleDateString()}</span>
+                <span>•</span>
+                <span className="text-gray-900">{post.category}</span>
+              </div>
+              <Link href={`/posts/${post.slug}`}>
+                <h2 className="text-3xl md:text-4xl font-serif font-bold text-gray-900 group-hover:text-gray-600 transition-colors">
+                  {post.title}
+                </h2>
+              </Link>
+            </header>
+            <div className="text-gray-600 font-serif text-lg leading-relaxed mb-8">
+              <p>{post.excerpt || post.content.substring(0, 150) + "..."}</p>
+            </div>
+            <footer className="flex items-center justify-between">
+              <Link 
+                href={`/posts/${post.slug}`}
+                className="text-sm font-bold uppercase tracking-widest text-gray-900 border-b-2 border-black pb-1 hover:border-gray-400 transition-colors"
+              >
+                Continue Reading
+              </Link>
+              <span className="text-xs font-serif italic text-gray-400">By {post.author || "Pratpa"}</span>
+            </footer>
+          </article>
+        ))}
+      </div>
+
+      <div className="mt-24 pt-12 border-t border-gray-100 flex justify-between items-center text-sm font-bold uppercase tracking-widest">
+        <button className="text-gray-300 cursor-not-allowed">← Newer Posts</button>
+        <button className="hover:text-gray-400 transition-colors">Older Posts →</button>
+      </div>
     </div>
   );
 }
