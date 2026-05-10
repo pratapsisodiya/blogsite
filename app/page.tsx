@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
+import { Loader2, Edit3 } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 // Static blogs as requested
 const STATIC_POSTS = [
@@ -36,6 +37,7 @@ const STATIC_POSTS = [
 ];
 
 export default function Home() {
+  const { data: session } = useSession();
   const [posts, setPosts] = useState<any[]>(STATIC_POSTS); // Default to static data
   const [loading, setLoading] = useState(true);
 
@@ -87,12 +89,22 @@ export default function Home() {
               <p>{post.excerpt || post.content.substring(0, 150) + "..."}</p>
             </div>
             <footer className="flex items-center justify-between">
-              <Link 
-                href={`/posts/${post.slug}`}
-                className="text-sm font-bold uppercase tracking-widest text-gray-900 border-b-2 border-black pb-1 hover:border-gray-400 transition-colors"
-              >
-                Continue Reading
-              </Link>
+              <div className="flex items-center space-x-6">
+                <Link 
+                  href={`/posts/${post.slug}`}
+                  className="text-sm font-bold uppercase tracking-widest text-gray-900 border-b-2 border-black pb-1 hover:border-gray-400 transition-colors"
+                >
+                  Continue Reading
+                </Link>
+                {session?.user && (
+                  <Link 
+                    href={`/posts/${post.slug}/edit`}
+                    className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-black transition-colors"
+                  >
+                    <Edit3 size={14} /> Edit
+                  </Link>
+                )}
+              </div>
               <span className="text-xs font-serif italic text-gray-400">By {post.author || "Pratpa"}</span>
             </footer>
           </article>

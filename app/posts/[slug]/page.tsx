@@ -2,8 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, Loader2 } from "lucide-react";
-import { useParams } from "next/navigation";
+import { ChevronLeft, Loader2, Edit3 } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 // Static blogs matching the landing page
 const STATIC_POSTS: Record<string, any> = {
@@ -50,6 +51,8 @@ const STATIC_POSTS: Record<string, any> = {
 
 export default function PostPage() {
   const params = useParams();
+  const router = useRouter();
+  const { data: session } = useSession();
   const [post, setPost] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -114,6 +117,16 @@ export default function PostPage() {
         <h1 className="text-5xl md:text-6xl font-serif font-bold text-gray-900 mb-8 leading-tight">
           {post.title}
         </h1>
+        {session?.user && (
+          <div className="flex justify-center mb-10">
+            <Link 
+              href={`/posts/${params.slug}/edit`}
+              className="inline-flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold bg-black text-white px-6 py-2 rounded-full hover:bg-gray-800 transition-all shadow-lg"
+            >
+              <Edit3 size={14} /> Edit This Post
+            </Link>
+          </div>
+        )}
         {post.image_url && (
           <div className="mb-12 rounded-lg overflow-hidden shadow-lg">
             <img src={post.image_url} alt={post.title} className="w-full h-auto object-cover" />

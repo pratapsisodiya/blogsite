@@ -85,6 +85,12 @@ const RichTextEditor = ({ content, onChange }: RichTextEditorProps) => {
     },
   });
 
+  React.useEffect(() => {
+    if (editor && content !== editor.getHTML()) {
+      editor.commands.setContent(content);
+    }
+  }, [content, editor]);
+
   return (
     <div className="w-full">
       <MenuBar editor={editor} />

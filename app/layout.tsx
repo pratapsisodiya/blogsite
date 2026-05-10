@@ -4,6 +4,7 @@ import "./globals.css";
 import SessionProvider from "@/components/SessionProvider";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import AdminBanner from "@/components/AdminBanner";
 
 
 const inter = Inter({
@@ -30,6 +31,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className={`${inter.variable} ${playfair.variable} antialiased`}>
       <body className="min-h-screen bg-white text-gray-900 font-sans selection:bg-black selection:text-white">
         <SessionProvider>
+          <AdminBanner />
           <Header />
           <main className="min-h-screen">
             {children}

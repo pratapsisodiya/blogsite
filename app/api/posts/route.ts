@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { neon } from "@neondatabase/serverless";
-import { initDB } from "@/lib/db";
+import { initDB, getSql } from "@/lib/db";
 
 export async function POST(req: Request) {
   await initDB();
@@ -26,7 +25,7 @@ export async function POST(req: Request) {
       .replace(/ /g, "-")
       .replace(/[^\w-]+/g, "");
 
-    const sql = neon(process.env.DATABASE_URL!);
+    const sql = getSql();
 
     // Insert post using tagged template literals
     const userEmail = session.user.email!;
@@ -53,7 +52,7 @@ export async function POST(req: Request) {
 export async function GET() {
   await initDB();
   try {
-    const sql = neon(process.env.DATABASE_URL!);
+    const sql = getSql();
     const posts = await sql`SELECT * FROM posts ORDER BY published_at DESC`;
     return NextResponse.json(posts);
   } catch (error) {

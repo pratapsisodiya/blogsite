@@ -1,14 +1,18 @@
 import { neon } from "@neondatabase/serverless";
 
-const sql = neon(process.env.DATABASE_URL!);
-
-export const db = sql;
+export function getSql() {
+  if (!process.env.DATABASE_URL) {
+    throw new Error("DATABASE_URL is not defined. Please check your .env files.");
+  }
+  return neon(process.env.DATABASE_URL);
+}
 
 let isInitialized = false;
 
 // Helper to initialize the database schema if needed
 export async function initDB() {
   if (isInitialized) return;
+  const sql = getSql();
   try {
     await sql`CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, name TEXT, email TEXT UNIQUE NOT NULL, password TEXT, image TEXT)`;
     
@@ -40,3 +44,4 @@ export async function initDB() {
     console.error("Neon Database initialization failed:", error);
   }
 }
+
