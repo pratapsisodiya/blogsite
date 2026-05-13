@@ -13,8 +13,8 @@ const Footer = () => {
           <span>Cookies</span>
         </div>
         <div className="flex items-center space-x-1">
-          <span>Proudly powered by</span>
-          <a href="#" className="font-bold text-gray-800 hover:underline">WordPress</a>
+          <span>Built using</span>
+          <a href="https://nextjs.org" className="font-bold text-gray-800 hover:underline">Next.js</a>
         </div>
       </div>
     </footer>

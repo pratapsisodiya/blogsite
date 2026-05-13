@@ -18,8 +18,8 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "The Daily Blog | Just another WordPress site",
-  description: "A blog created with Next.js but styled like WordPress",
+  title: "The Daily Blog | Built using Next.js",
+  description: "A blog created with Next.js",
 };
 
 export default function RootLayout({
